@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+    <div class="contenedor">
+        <header></header>
+        <div class="wraper">
+            <div class="content">
+                <div class="col1">
+                    <h4>New Proyect</h4>
+                    <div class="box_proyect">
+                        <div class="box" data-proyect="WebRosatel_Encapsulado_V1">
+                            <h5>WebRosatel</h5>
+                        </div>
+                        <div class="box" data-proyect="wsahi">
+                            <h5>WSAHI</h5>
+                        </div>
+                    </div>
+
+                    <div class="box_data none">
+                        <h4>Data:</h4>
+                        <div class="fila">
+                            <label for="">Rama:</label>
+                            <input type="text" id="rama">
+                        </div>
+                        <div class="fila">
+                            <label for="">Puerto App:</label>
+                            <input type="text" id="papp">
+                        </div>
+                        <div class="fila">
+                            <label for="">Puerto BD:</label>
+                            <input type="text" id="pbd">
+                        </div>
+                        <div class="fila_larga">
+                            <div class="btn">RUN <div class="loader"></div></div>
+                        </div>
+                        
+                    </div>
+                </div>
+                <div class="col2">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/jq.js"></script>
+    <script>
+        $URL="http://172.20.52.93:8010";
+        $PROYECT="";
+        $VALUE="";
+
+        $(".box_proyect .box").click(function(){
+            $(".content .box_data").removeClass("none");
+            $PROYECT=$(this).attr("data-proyect");
+            $(".box_proyect .box").removeClass("active");
+            $(this).addClass("active");
+        })
+
+        $(".content .box_data .btn").click(function(){
+            $(".content .box_data .btn").addClass("active");
+            rama=$("#rama").val();
+            papp=$("#papp").val();
+            pbd=$("#pbd").val();
+            runApp(rama,papp,pbd);
+
+        })
+
+
+
+        function runApp(rama,papp,pbd){
+            $.ajax({
+            url : $URL+"/start?rama="+rama+"&papp="+papp+"&pbd="+pbd+"&proyect="+$PROYECT,
+            type : 'GET',
+            dataType: "json",
+            success : function(DATA)
+                {       
+//                    js2=JSON.parse(js)
+                    console.log(DATA);
+                    $VALUE=DATA;
+                    $(".content .box_data .btn").removeClass("active");
+                    listApp();
+
+                }
+            }).fail(function(){
+                $(".content .box_data .btn").removeClass("active");
+
+                alert("error");
+            })
+        }
+        function listApp(){
+            $.ajax({
+            url : $URL+"/listar",
+            type : 'GET',
+            dataType: "json",
+            success : function(DATA)
+                {       
+//                    js2=JSON.parse(js)
+                    console.log(DATA);
+                    $VALUE=DATA;
+                    for (let x = 0; x < DATA.length; x++) {
+                        Proyect=DATA[x]['Proyect'];
+                        Rama=DATA[x]['Rama'];
+                        Papp=DATA[x]['Papp'];
+                        Pbd=DATA[x]['Pbd'];
+                        Folder=DATA[x]['Folder'];
+
+                        $(".col2").append("<div class='box'>"+
+                            "<p>Proyecto: </p><span>"+DATA[x]['Proyect']+"</span>"+
+                            "<p>Rama: </p><span>"+DATA[x]['Rama']+"</span>"+
+                            "<p>Puerto App:</p><span>"+DATA[x]['Papp']+"</span>"+
+                            "<p>Puerto BD:</p><span>"+DATA[x]['Pbd']+"</span>"+
+                            "<p>USER BD:</p><span>root</span>"+
+                            "<p>PASS BD:</p><span>admin</span>"+
+                            "<p>URL:</p><span>172.20.52.93</span>"+
+                            "<a href='http://172.20.52.93:"+DATA[x]['Papp']+"/lima/' target='_blank'>Link</a>"+
+                            "<p class='update' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>")                        
+                    }
+                }
+            })
+        }
+        listApp();
+
+        function Update(Proyect,Rama,papp,pbd,Folder){
+            $.ajax({
+            url : $URL+"/restart?rama="+rama+"&papp="+papp+"&pbd="+pbd+"&pfolder="+Folder,
+            type : 'GET',
+            dataType: "json",
+            success : function(DATA)
+                {       
+//                    js2=JSON.parse(js)
+                    console.log(DATA);
+                    $VALUE=DATA;
+                }
+            }).fail(function(){
+                $(".content .box_data .btn").removeClass("active");
+
+                alert("error");
+            })
+        }
+
+    </script>
+</body>
+</html>
