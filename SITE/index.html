@@ -104,12 +104,13 @@
                     console.log(DATA);
                     $VALUE=DATA;
                     for (let x = 0; x < DATA.length; x++) {
+                        ProyectID=DATA[x]['Id'];
                         Proyect=DATA[x]['Proyect'];
                         Rama=DATA[x]['Rama'];
                         Papp=DATA[x]['Papp'];
                         Pbd=DATA[x]['Pbd'];
                         Folder=DATA[x]['Folder'];
-
+                        $(".col2").html('');
                         $(".col2").append("<div class='box'>"+
                             "<p>Proyecto: </p><span>"+DATA[x]['Proyect']+"</span>"+
                             "<p>Rama: </p><span>"+DATA[x]['Rama']+"</span>"+
@@ -119,7 +120,8 @@
                             "<p>PASS BD:</p><span>admin</span>"+
                             "<p>URL:</p><span>172.20.52.93</span>"+
                             "<a href='http://172.20.52.93:"+DATA[x]['Papp']+"/lima/' target='_blank'>Link</a>"+
-                            "<p class='update' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>")                        
+                            "<p class='update' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>"+                        
+                            "<p class='update delete' onclick=Delete('"+ProyectID+"','"+Folder+"') >Delete</p></p>")                        
                     }
                 }
             })
@@ -136,6 +138,26 @@
 //                    js2=JSON.parse(js)
                     console.log(DATA);
                     $VALUE=DATA;
+                }
+            }).fail(function(){
+                $(".content .box_data .btn").removeClass("active");
+
+                alert("error");
+            })
+        }
+
+
+        function Delete(ProyectID,Folder){
+            $.ajax({
+            url : $URL+"/delete?ProyectID="+ProyectID+"&pfolder="+Folder,
+            type : 'GET',
+            dataType: "json",
+            success : function(DATA)
+                {       
+//                    js2=JSON.parse(js)
+                    console.log(DATA);
+                    $VALUE=DATA;
+                    listApp();
                 }
             }).fail(function(){
                 $(".content .box_data .btn").removeClass("active");

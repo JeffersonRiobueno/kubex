@@ -55,7 +55,7 @@ func randSeq(n int) string {
 
         }
         defer db.Close()
-        filas, err := db.Query("SELECT * FROM runner order by 1 desc")
+        filas, err := db.Query("SELECT * FROM runner WHERE `status` = '1' order by 1 desc")
     
         if err != nil {
             log.Fatal(err)
@@ -135,8 +135,7 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
 
 
 	json.NewEncoder(writer).Encode(p)
-//    fmt.Printf(out)
-//	return 2
+
 
 }
 
@@ -168,12 +167,54 @@ func Restart(writer http.ResponseWriter, request *http.Request){
 
 }
 
+func Delete(writer http.ResponseWriter, request *http.Request){
+	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+    query := request.URL.Query()
+    ID := query.Get("ProyectID")
+    folder := query.Get("pfolder")
+	out, err := exec.Command("/bin/sh", "delete.sh", folder).Output()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    db, err := obtenerBaseDeDatos()
+	if err != nil {
+        log.Fatal(err)
+	}
+	defer db.Close()
+
+	sentenciaPreparada, err := db.Prepare("UPDATE `runner` SET `status` = '0' WHERE (`id` = ?);")
+	if err != nil {
+        log.Fatal(err)
+	}
+	defer sentenciaPreparada.Close()
+	// Ejecutar sentencia, un valor por cada '?'
+	_, err = sentenciaPreparada.Exec(ID)
+	if err != nil {
+        log.Fatal(err)
+	}
+    fmt.Printf("asas%s\n", out)
+	
+	p := Pais{
+        Nombre:     "Canada",
+        Habitantes: 37314442,
+        Capital:    folder,
+    }
+
+
+	json.NewEncoder(writer).Encode(p)
+
+
+}
+
 //INSERT INTO `kubex`.`runner` (`proyect`, `rama`, `folder`, `pApp`, `pBd`, `status`) VALUES ('test', 'dev', 'fold', '80', '30', '0');
 
 func main() {
 //    bd := NuevaBD()
 	http.HandleFunc("/start", RunPoyect)
 	http.HandleFunc("/restart", Restart)
+	http.HandleFunc("/delete", Delete)
     http.HandleFunc("/listar", ListarProyect)
 
 	fmt.Println("Running ...")
