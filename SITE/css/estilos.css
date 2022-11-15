@@ -159,20 +159,22 @@ body{
   width: 100px;
   font-weight: 700;
 }
-.content .col1 .box_data .fila input{
+.content .col1 .box_data .fila input, .content .col1 .box_data .fila select{
   width: 60%;
   flex-grow: 1;
   height: 100%;
   padding: 5px;
+  font-size: 16px;
+  font-family: unset;
 }
 .content .col1 .box_data .fila_larga{
   width: 100%;
 }
 .content .col1 .box_data .fila_larga .btn{}
-.content .col1 .box_data .fila_larga .btn.active{
+.content .col1 .box_data .fila .btn.active{
   font-size: 0;
 }
-.content .col1 .box_data .fila_larga .btn.active .loader{
+.content .col1 .box_data .fila .btn.active .loader{
   display: block;
 }
 .content .col2{
@@ -197,11 +199,14 @@ body{
     margin-bottom: 3px;
 }
 .content .col2 .box a{
-  margin: 5px 0;
-  display: block;
-  text-decoration-line: underline;
+  padding: 5px;
+  background: #03bd4d;
   font-weight: 600;
+  text-align: center;
+  color: #fff;
+  cursor: pointer;
   width: 100%;
+  margin-bottom: 6px;
 }
 .content .col2 .box p.update{
   padding: 5px;
@@ -213,6 +218,7 @@ body{
   /* margin: auto; */
   /* display: block; */
   width: 100%;
+  margin-bottom: 6px;
 }
 
 .btn{
@@ -230,7 +236,44 @@ body{
 
 
 
-
-
-
-
+.fondo{
+    background: #000000ad;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+.fondo .box_msj{
+    width: 300px;
+    height: 150px;
+    background: #fff;
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    top: 0;
+    bottom: 0;
+}
+.fondo .box_msj p{
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    font-weight: 600;
+}
+.fondo .box_msj .loader{
+    background: linear-gradient(to right, #20c90b 10%, rgba(255, 255, 255, 0) 42%);
+    margin: auto;
+    width: 50px;
+    height: 50px;
+    left: 0;
+    right: 0;
+    bottom: 20px;
+    display: block;
+}
+.fondo .box_msj .loader:before{
+    background: #20c90b;
+}
+.fondo .box_msj .loader:after{
+    background: #fff;
+}

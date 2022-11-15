@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Kubex</title>
     <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
@@ -18,7 +18,7 @@
                         <div class="box" data-proyect="WebRosatel_Encapsulado_V1">
                             <h5>WebRosatel</h5>
                         </div>
-                        <div class="box" data-proyect="wsahi">
+                        <div class="box none" data-proyect="wsahi">
                             <h5>WSAHI</h5>
                         </div>
                     </div>
@@ -29,15 +29,8 @@
                             <label for="">Rama:</label>
                             <input type="text" id="rama">
                         </div>
+                        
                         <div class="fila">
-                            <label for="">Puerto App:</label>
-                            <input type="text" id="papp">
-                        </div>
-                        <div class="fila">
-                            <label for="">Puerto BD:</label>
-                            <input type="text" id="pbd">
-                        </div>
-                        <div class="fila_larga">
                             <div class="btn">RUN <div class="loader"></div></div>
                         </div>
                         
@@ -49,11 +42,19 @@
             </div>
         </div>
     </div>
+    <div class="fondo none">
+        <div class="box_msj">
+            <p>DEFECTO</p>
+            <div class="loader"></div>
+        </div>
+    </div>
     <script src="js/jq.js"></script>
     <script>
         $URL="http://172.20.52.93:8010";
         $PROYECT="";
         $VALUE="";
+        papp='';
+        pbd='';
 
         $(".box_proyect .box").click(function(){
             $(".content .box_data").removeClass("none");
@@ -63,44 +64,46 @@
         })
 
         $(".content .box_data .btn").click(function(){
-            $(".content .box_data .btn").addClass("active");
             rama=$("#rama").val();
-            papp=$("#papp").val();
-            pbd=$("#pbd").val();
-            runApp(rama,papp,pbd);
+            console.log(rama);
+            if(rama!=""){
+                $(".content .box_data .btn").addClass("active");
+                runApp(rama);                
+            }else{
+                alert("Verifcar nombre de la Rama")
+            }
 
         })
 
 
 
-        function runApp(rama,papp,pbd){
+        function runApp(rama){
             $.ajax({
-            url : $URL+"/start?rama="+rama+"&papp="+papp+"&pbd="+pbd+"&proyect="+$PROYECT,
-            type : 'GET',
-            dataType: "json",
-            success : function(DATA)
-                {       
-//                    js2=JSON.parse(js)
-                    console.log(DATA);
-                    $VALUE=DATA;
+                url : $URL+"/start?rama="+rama+"&proyect="+$PROYECT,
+                type : 'GET',
+                dataType: "json",
+                success : function(DATA)
+                    {       
+                        console.log(DATA);
+                        $VALUE=DATA;
+                        $(".content .box_data .btn").removeClass("active");
+                        listApp();
+
+                    }
+                }).fail(function(){
                     $(".content .box_data .btn").removeClass("active");
-                    listApp();
 
-                }
-            }).fail(function(){
-                $(".content .box_data .btn").removeClass("active");
-
-                alert("error");
-            })
+                    alert("error");
+                })
         }
         function listApp(){
+            $(".col2").html('');
             $.ajax({
             url : $URL+"/listar",
             type : 'GET',
             dataType: "json",
             success : function(DATA)
                 {       
-//                    js2=JSON.parse(js)
                     console.log(DATA);
                     $VALUE=DATA;
                     for (let x = 0; x < DATA.length; x++) {
@@ -110,7 +113,6 @@
                         Papp=DATA[x]['Papp'];
                         Pbd=DATA[x]['Pbd'];
                         Folder=DATA[x]['Folder'];
-                        $(".col2").html();
                         $(".col2").append("<div class='box'>"+
                             "<p>Proyecto: </p><span>"+DATA[x]['Proyect']+"</span>"+
                             "<p>Rama: </p><span>"+DATA[x]['Rama']+"</span>"+
@@ -126,18 +128,21 @@
                 }
             })
         }
-        listApp();
 
         function Update(Proyect,Rama,papp,pbd,Folder){
+            alert_fondo("Actualizando, espere (No recargues el navegador)");
             $.ajax({
-            url : $URL+"/restart?rama="+rama+"&papp="+papp+"&pbd="+pbd+"&pfolder="+Folder,
+            url : $URL+"/restart?rama="+Rama+"&papp="+papp+"&pbd="+pbd+"&pfolder="+Folder,
             type : 'GET',
             dataType: "json",
             success : function(DATA)
                 {       
-//                    js2=JSON.parse(js)
                     console.log(DATA);
+                    listApp();
                     $VALUE=DATA;
+                    $(".fondo ").addClass('none');
+                    alert("Proyecto Actualizado");
+
                 }
             }).fail(function(){
                 $(".content .box_data .btn").removeClass("active");
@@ -148,16 +153,21 @@
 
 
         function Delete(ProyectID,Folder){
+            alert_fondo("Eliminando, espere (No recargues el navegador)");
+
             $.ajax({
             url : $URL+"/delete?ProyectID="+ProyectID+"&pfolder="+Folder,
             type : 'GET',
             dataType: "json",
             success : function(DATA)
                 {       
-//                    js2=JSON.parse(js)
                     console.log(DATA);
                     $VALUE=DATA;
                     listApp();
+                    $(".fondo ").addClass('none');
+                    alert("Proyecto Eliminado");
+
+
                 }
             }).fail(function(){
                 $(".content .box_data .btn").removeClass("active");
@@ -165,6 +175,12 @@
                 alert("error");
             })
         }
+        function alert_fondo(msj){
+            $(".fondo .box_msj p").html(msj);
+            $(".fondo ").removeClass('none');
+
+        }
+        listApp();
 
     </script>
 </body>

@@ -8,18 +8,27 @@ import (
 	"encoding/json"
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
+    "time"
+    "strconv"
 
 
 
 )
-var letters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
-func randSeq(n int) string {
-    b := make([]rune, n)
-    for i := range b {
-        b[i] = letters[rand.Intn(len(letters))]
+var r *rand.Rand
+ 
+func init() {
+    r = rand.New(rand.NewSource(time.Now().Unix()))
+}
+ 
+// RandString genera una cadena aleatoria
+func RandString(len int) string {
+    bytes := make([]byte, len)
+    for i := 0; i < len; i++ {
+        b := r.Intn(26) + 65
+        bytes[i] = byte(b)
     }
-    return string(b)
+    return string(bytes)
 }
 
 	type Pais struct {
@@ -31,6 +40,7 @@ func randSeq(n int) string {
         Proyect, Rama, Folder, Papp, Pbd string
         Id, Status int
     }
+
     func obtenerBaseDeDatos() (db *sql.DB, e error) {
         usuario := "root"
         pass := "admin"
@@ -45,56 +55,55 @@ func randSeq(n int) string {
     }
     
   
-    func ListarProyect(writer http.ResponseWriter, request *http.Request){
-        writer.Header().Set("Content-Type", "application/json")
-    	writer.Header().Set("Access-Control-Allow-Origin", "*")
-        Pro := []Data{}
-        db, err := obtenerBaseDeDatos()
-        if err != nil {
-            log.Fatal(err)
-
-        }
-        defer db.Close()
-        filas, err := db.Query("SELECT * FROM runner WHERE `status` = '1' order by 1 desc")
-    
-        if err != nil {
-            log.Fatal(err)
-
-        }
-        // Si llegamos aquí, significa que no ocurrió ningún error
-        defer filas.Close()
-    
-        // Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
-
-        // Recorrer todas las filas, en un "while"
-        for filas.Next() {
-            var proyect, rama, folder, pApp, pBd string
-            var id, status int
-            err = filas.Scan(&id, &proyect, &rama, &folder, &pApp, &pBd, &status)
-            // Al escanear puede haber un error
-            if err != nil {
-                log.Fatal(err)
-
-            }
-            // Y si no, entonces agregamos lo leído al arreglo
-
-            pro := Data{
-                Id: id,
-                Proyect: proyect,
-                Rama: rama,
-                Folder: folder,
-                Papp: pApp,
-                Pbd: pBd,
-                Status: status,
-            }
-            Pro = append(Pro,pro)
-        }
-        
-        json.NewEncoder(writer).Encode(Pro)
-
+func ListarProyect(writer http.ResponseWriter, request *http.Request){
+    writer.Header().Set("Content-Type", "application/json")
+    writer.Header().Set("Access-Control-Allow-Origin", "*")
+    Pro := []Data{}
+    db, err := obtenerBaseDeDatos()
+    if err != nil {
+        fmt.Println(err)
 
     }
-      
+    defer db.Close()
+    filas, err := db.Query("SELECT * FROM runner WHERE `status` = '1' order by 1 desc")
+
+    if err != nil {
+        fmt.Println(err)
+
+    }
+    // Si llegamos aquí, significa que no ocurrió ningún error
+    defer filas.Close()
+
+    // Aquí vamos a "mapear" lo que traiga la consulta en el while de más abajo
+
+    // Recorrer todas las filas, en un "while"
+    for filas.Next() {
+        var proyect, rama, folder, pApp, pBd string
+        var id, status int
+        err = filas.Scan(&id, &proyect, &rama, &folder, &pApp, &pBd, &status)
+        // Al escanear puede haber un error
+        if err != nil {
+            fmt.Println(err)
+
+        }
+        // Y si no, entonces agregamos lo leído al arreglo
+
+        pro := Data{
+            Id: id,
+            Proyect: proyect,
+            Rama: rama,
+            Folder: folder,
+            Papp: pApp,
+            Pbd: pBd,
+            Status: status,
+        }
+        Pro = append(Pro,pro)
+    }
+    
+    json.NewEncoder(writer).Encode(Pro)
+
+
+}
     
    
 func RunPoyect(writer http.ResponseWriter, request *http.Request){
@@ -102,32 +111,34 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
     query := request.URL.Query()
     rama := query.Get("rama")
-    papp := query.Get("papp")
-    pbd := query.Get("pbd")
+    papp := strconv.Itoa(PortApp())
+    pbd := strconv.Itoa(PortBD())
     proyect := query.Get("proyect")
-	folder := randSeq(10)
-	out, err := exec.Command("/bin/sh", "e.sh", rama, papp, pbd, folder).Output()
-    if err != nil {
-        log.Fatal(err)
-    }
+	folder := RandString(10)
+	
     db, err := obtenerBaseDeDatos()
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
 	}
 	defer db.Close()
 	sentenciaPreparada, err := db.Prepare("INSERT INTO `runner` (`proyect`, `rama`, `folder`, `pApp`, `pBd`, `status`) VALUES (?, ?, ?, ?, ?, '1');")
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
 	}
 	defer sentenciaPreparada.Close()
 	// Ejecutar sentencia, un valor por cada '?'
 	_, err = sentenciaPreparada.Exec(proyect, rama, folder, papp, pbd)
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
 	}
-    fmt.Printf("asas%s\n", out)
-	
-	p := Pais{
+
+    out, err := exec.Command("/bin/sh", "e.sh", rama, papp, pbd, folder).Output()
+    if err != nil {
+        fmt.Println(err)
+    }
+
+    fmt.Printf("%s\n", out)
+    p := Pais{
         Nombre:     "Canada",
         Habitantes: 37314442,
         Capital:    folder,
@@ -135,8 +146,6 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
 
 
 	json.NewEncoder(writer).Encode(p)
-
-
 }
 
 
@@ -150,7 +159,7 @@ func Restart(writer http.ResponseWriter, request *http.Request){
 	folder := query.Get("pfolder")
 	out, err := exec.Command("/bin/sh", "restart.sh", rama, papp, pbd, folder).Output()
     if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
     }
     fmt.Printf("asas%s\n", out)
 	
@@ -175,24 +184,25 @@ func Delete(writer http.ResponseWriter, request *http.Request){
     folder := query.Get("pfolder")
 	out, err := exec.Command("/bin/sh", "delete.sh", folder).Output()
     if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
     }
 
     db, err := obtenerBaseDeDatos()
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
+
 	}
 	defer db.Close()
 
 	sentenciaPreparada, err := db.Prepare("UPDATE `runner` SET `status` = '0' WHERE (`id` = ?);")
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
 	}
 	defer sentenciaPreparada.Close()
 	// Ejecutar sentencia, un valor por cada '?'
 	_, err = sentenciaPreparada.Exec(ID)
 	if err != nil {
-        log.Fatal(err)
+        fmt.Println(err)
 	}
     fmt.Printf("asas%s\n", out)
 	
@@ -207,6 +217,51 @@ func Delete(writer http.ResponseWriter, request *http.Request){
 
 
 }
+
+  
+func PortApp()(p int){
+    db, err := obtenerBaseDeDatos()
+    if err != nil {
+        fmt.Println(err)
+    }
+    defer db.Close()
+    filas, err := db.Query("select MIN(portApp) as portApp from portApp where portApp not in(select pApp from runner as r where r.status=1) ")
+
+    if err != nil {
+        fmt.Println(err)
+    }
+    defer filas.Close()
+    for filas.Next() {
+        err = filas.Scan(&p)
+        if err != nil {
+            fmt.Println(err)
+        }
+    }
+    return p
+}
+
+func PortBD()(p int){
+    db, err := obtenerBaseDeDatos()
+    if err != nil {
+        fmt.Println(err)
+    }
+    defer db.Close()
+    filas, err := db.Query("select MIN(portBD) as portBD  from portBD where portBD not in(select pBd from runner as r where r.status=1)")
+
+    if err != nil {
+        fmt.Println(err)
+    }
+    defer filas.Close()
+    for filas.Next() {
+        err = filas.Scan(&p)
+        if err != nil {
+            fmt.Println(err)
+        }
+    }
+    return p
+}
+
+
 
 //INSERT INTO `kubex`.`runner` (`proyect`, `rama`, `folder`, `pApp`, `pBd`, `status`) VALUES ('test', 'dev', 'fold', '80', '30', '0');
 
