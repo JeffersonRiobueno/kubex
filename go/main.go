@@ -111,11 +111,17 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
     query := request.URL.Query()
     rama := query.Get("rama")
-    papp := strconv.Itoa(PortApp())
-    pbd := strconv.Itoa(PortBD())
     proyect := query.Get("proyect")
+
+    
 	folder := RandString(10)
-	
+	if proyect == "WebRosatel_Encapsulado_V1" {
+        papp := strconv.Itoa(PortApp())
+        pbd := strconv.Itoa(PortBD())
+	}else{
+        papp := ""
+        pbd := ""
+    }
     db, err := obtenerBaseDeDatos()
 	if err != nil {
         fmt.Println(err)
@@ -132,7 +138,7 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
         fmt.Println(err)
 	}
 
-    out, err := exec.Command("/bin/sh", "e.sh", rama, papp, pbd, folder).Output()
+    out, err := exec.Command("/bin/sh", "e.sh", rama, papp, pbd, folder, proyect).Output()
     if err != nil {
         fmt.Println(err)
     }
@@ -212,9 +218,7 @@ func Delete(writer http.ResponseWriter, request *http.Request){
         Capital:    folder,
     }
 
-
 	json.NewEncoder(writer).Encode(p)
-
 
 }
 
@@ -278,12 +282,5 @@ func main() {
         log.Fatal("ListenAndServe: ", err.Error())
     }
     //http.ListenAndServe(":8080", MuestraLibros(bd))
-
-
-
-
-
-
-
 	
 }

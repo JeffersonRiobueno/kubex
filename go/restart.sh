@@ -1,9 +1,10 @@
 #!/bin/dash
 
-cd build
+#cd build
 cd $4
 docker-compose down
 git reset --hard
+rm -f themes/rosatel/assets/cache/*
 git pull
 
 sed -i 's/8086/'$2'/g' .env
