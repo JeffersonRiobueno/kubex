@@ -18,8 +18,8 @@
                         <div class="box" data-proyect="WebRosatel_Encapsulado_V1">
                             <h5>WebRosatel</h5>
                         </div>
-                        <div class="box none" data-proyect="wsahi">
-                            <h5>WSAHI</h5>
+                        <div class="box" data-proyect="CATALAGO_WEB">
+                            <h5>CATALAGO_WEB</h5>
                         </div>
                     </div>
 
@@ -113,17 +113,20 @@
                         Papp=DATA[x]['Papp'];
                         Pbd=DATA[x]['Pbd'];
                         Folder=DATA[x]['Folder'];
+                        none='';
+                        if(Papp==8084)
+                            none='none';
                         $(".col2").append("<div class='box'>"+
-                            "<p>Proyecto: </p><span>"+DATA[x]['Proyect']+"</span>"+
-                            "<p>Rama: </p><span>"+DATA[x]['Rama']+"</span>"+
-                            "<p>Puerto App:</p><span>"+DATA[x]['Papp']+"</span>"+
-                            "<p>Puerto BD:</p><span>"+DATA[x]['Pbd']+"</span>"+
+                            "<p>Proyecto: </p><span>"+Proyect+"</span>"+
+                            "<p>Rama: </p><span>"+Rama+"</span>"+
+                            "<p>Puerto App:</p><span>"+Papp+"</span>"+
+                            "<p>Puerto BD:</p><span>"+Pbd+"</span>"+
                             "<p>USER BD:</p><span>root</span>"+
                             "<p>PASS BD:</p><span>admin</span>"+
                             "<p>URL:</p><span>172.20.52.93</span>"+
-                            "<a href='http://172.20.52.93:"+DATA[x]['Papp']+"/lima/' target='_blank'>Link</a>"+
-                            "<p class='update' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>"+                        
-                            "<p class='update delete' onclick=Delete('"+ProyectID+"','"+Folder+"') >Delete</p></p>")                        
+                            "<a href='http://172.20.52.93:"+Papp+"/lima/' target='_blank'>Link</a>"+
+                            "<p class='update "+none+"' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>"+                        
+                            "<p class='update delete "+none+"' onclick=Delete('"+ProyectID+"','"+Folder+"') >Delete</p></p>")                        
                     }
                 }
             })

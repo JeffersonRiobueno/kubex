@@ -1,2 +1,2 @@
-go/build
+go/linux/build
 *.exe
