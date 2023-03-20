@@ -1,0 +1,10 @@
+version: "3"
+services:
+  linux:
+    build: .
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    ports: 
+      - "8010:8010"
+    command: go run main.go

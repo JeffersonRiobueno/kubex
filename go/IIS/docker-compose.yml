@@ -1,0 +1,10 @@
+version: "3"
+services:
+  iis:
+    build: .
+    volumes:
+      - ./:/app
+    restart: unless-stopped
+    ports: 
+      - "8081:8081"
+    command: go run app.go

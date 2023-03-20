@@ -62,8 +62,8 @@ func deployHandler(w http.ResponseWriter, r *http.Request) {
     }
 
     // Backup dle proyecto 
-    cmd2 := exec.Command("powershell", "-Command", fmt.Sprintf("%s/RUN.ps1", appFolder))
-    if err := cmd2.Run(); err != nil {
+    bk := exec.Command("powershell", "-Command", fmt.Sprintf("%s/RUN.ps1", appFolder))
+    if err := bk.Run(); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
@@ -104,8 +104,8 @@ func deployHandler(w http.ResponseWriter, r *http.Request) {
         inFile.Close()
     }
     // Run config del proyecto 
-    cmd2 := exec.Command("powershell", "-Command", fmt.Sprintf("%s/CONFIG.ps1", appFolder))
-    if err := cmd2.Run(); err != nil {
+    config := exec.Command("powershell", "-Command", fmt.Sprintf("%s/CONFIG.ps1", appFolder))
+    if err := config.Run(); err != nil {
         http.Error(w, err.Error(), http.StatusInternalServerError)
         return
     }
