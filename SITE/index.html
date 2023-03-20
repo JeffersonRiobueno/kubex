@@ -114,6 +114,9 @@
                         Pbd=DATA[x]['Pbd'];
                         Folder=DATA[x]['Folder'];
                         none='';
+                        rb_path="";
+                        if(Proyect=="WebRosatel_Encapsulado_V1")
+                            rb_path="lima/";
                         if(Papp==8084)
                             none='none';
                         $(".col2").append("<div class='box'>"+
@@ -124,7 +127,7 @@
                             "<p>USER BD:</p><span>root</span>"+
                             "<p>PASS BD:</p><span>admin</span>"+
                             "<p>URL:</p><span>172.20.52.93</span>"+
-                            "<a href='http://172.20.52.93:"+Papp+"/lima/' target='_blank'>Link</a>"+
+                            "<a href='http://172.20.52.93:"+Papp+"/"+rb_path+"' target='_blank'>Link</a>"+
                             "<p class='update "+none+"' onclick=Update('"+Proyect+"','"+Rama+"','"+Papp+"','"+Pbd+"','"+Folder+"') >Update</p></p>"+                        
                             "<p class='update delete "+none+"' onclick=Delete('"+ProyectID+"','"+Folder+"') >Delete</p></p>")                        
                     }

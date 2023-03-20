@@ -112,16 +112,14 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
     query := request.URL.Query()
     rama := query.Get("rama")
     proyect := query.Get("proyect")
-    papp :=""
+    papp := strconv.Itoa(PortApp())
     pbd :=""
     
 	folder := RandString(10)
 	if proyect == "WebRosatel_Encapsulado_V1" {
-        papp = strconv.Itoa(PortApp())
         pbd = strconv.Itoa(PortBD())
 	}else{
-        papp = ""
-        pbd = ""
+        pbd = "1"
     }
     db, err := obtenerBaseDeDatos()
 	if err != nil {
