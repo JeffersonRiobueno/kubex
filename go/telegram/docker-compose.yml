@@ -1,0 +1,11 @@
+version: "3"
+services:
+  linux:
+    build: .
+    volumes:
+      - ./:/app
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    ports: 
+      - "8080:8080"
+    command: go run app.go

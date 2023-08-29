@@ -137,7 +137,7 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request){
         fmt.Println(err)
 	}
 
-    out, err := exec.Command("/bin/sh", "e.sh", rama, papp, pbd, folder, proyect).Output()
+    out, err := exec.Command("/bin/sh", "create.sh", rama, papp, pbd, folder, proyect).Output()
     if err != nil {
         fmt.Println(err)
     }
