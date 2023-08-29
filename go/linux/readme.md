@@ -1,5 +1,10 @@
-# API
-Esta api permite delvolver los directorios y archivos de una ubicación en especifico
+# API KUBEX
+Esta api cuenta con 3 metodos que ejecutan script.sh en un serviodr remoto.
+- create.sh
+- update.sh
+- delete.sh
+
+Con esto puedes desplegar aplicaciones en un servidor remoto con linux
 
 Para generar binario es windows ejecutar: 
 
