@@ -18,8 +18,8 @@
                         <div class="box" data-proyect="WebRosatel_Encapsulado_V1">
                             <h5>WebRosatel</h5>
                         </div>
-                        <div class="box" data-proyect="CATALAGO_WEB">
-                            <h5>CATALAGO_WEB</h5>
+                        <div class="box" data-proyect="Rosatel.com">
+                            <h5>Rosatel.com</h5>
                         </div>
                     </div>
 
@@ -138,7 +138,7 @@
         function Update(Proyect,Rama,papp,pbd,Folder){
             alert_fondo("Actualizando, espere (No recargues el navegador)");
             $.ajax({
-            url : $URL+"/restart?rama="+Rama+"&papp="+papp+"&pbd="+pbd+"&pfolder="+Folder,
+            url : $URL+"/restart?rama="+Rama+"&papp="+papp+"&pbd="+pbd+"&pfolder="+Folder+"&proyect="+Proyect,
             type : 'GET',
             dataType: "json",
             success : function(DATA)

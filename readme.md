@@ -20,7 +20,7 @@ Correr desde la terminal
 
 Para utilizarlce con docker: 
 
-	docker run -dti --name GO -v "$PWD":/app -p 8010:8010 golang
+	docker run -dti --name GO -v "$PWD":/app -p 8010:8010 golang:1.18
 	docker exec -ti GO bash
 	cd /app
 	go run main.go

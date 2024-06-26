@@ -161,8 +161,9 @@ func Restart(writer http.ResponseWriter, request *http.Request){
     rama := query.Get("rama")
     papp := query.Get("papp")
     pbd := query.Get("pbd")
+    proyect := query.Get("proyect")
 	folder := query.Get("pfolder")
-	out, err := exec.Command("/bin/sh", "restart.sh", rama, papp, pbd, folder).Output()
+	out, err := exec.Command("/bin/sh", "restart.sh", rama, papp, pbd, folder, proyect).Output()
     if err != nil {
         fmt.Println(err)
     }
