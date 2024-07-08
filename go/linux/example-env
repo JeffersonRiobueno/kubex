@@ -1,0 +1,4 @@
+USER_BD=root
+PASS_BD=admin
+HOST=172.0.0.1:3306
+NAME_BD=admin

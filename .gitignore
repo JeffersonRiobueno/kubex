@@ -1,3 +1,4 @@
 go/linux/build
 *.exe
 d-mysql
+.env
