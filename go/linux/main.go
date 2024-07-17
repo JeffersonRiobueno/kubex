@@ -117,6 +117,7 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request) {
     papp := strconv.Itoa(PortApp())
     pbd := ""
     folder := RandString(10)
+    Repo := os.Getenv("R_REPO")
     if proyect == "WebRosatel_Encapsulado_V1" {
         pbd = strconv.Itoa(PortBD())
     } else {
@@ -136,7 +137,7 @@ func RunPoyect(writer http.ResponseWriter, request *http.Request) {
     if err != nil {
         fmt.Println(err)
     }
-    out, err := exec.Command("/bin/sh", "create.sh", rama, papp, pbd, folder, proyect).Output()
+    out, err := exec.Command("/bin/sh", "create.sh", rama, papp, pbd, folder, proyect, Repo).Output()
     if err != nil {
         fmt.Println(err)
     }
@@ -247,13 +248,19 @@ func PortBD() int {
 }
 
 func main() {
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatalf("Error al cargar el archivo .env: %v", err)
+    }
+    // Obtener las variables de entorno
+    Port := os.Getenv("R_PORT")
     http.HandleFunc("/start", RunPoyect)
     http.HandleFunc("/restart", Restart)
     http.HandleFunc("/delete", Delete)
     http.HandleFunc("/listar", ListarProyect)
     fmt.Println("Running ...")
-    err := http.ListenAndServe(":8010", nil)
-    if err != nil {
-        log.Fatal("ListenAndServe: ", err.Error())
+    err2 := http.ListenAndServe(Port, nil)
+    if err2 != nil {
+        log.Fatal("ListenAndServe: ", err2.Error())
     }
 }

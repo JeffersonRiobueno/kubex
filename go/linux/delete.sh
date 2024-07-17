@@ -1,14 +1,13 @@
 #!/bin/dash
 
-##cd build
 if [ -d $1 ];
 then
-    cd $1
-    docker-compose down
-    git reset --hard
+    cd $1 #Ingresas al directorio
+    docker-compose down # Detienes los contenedores
+    git reset --hard # Remueves cambios generados 
 
-    cd ..
-    rm -rf $1
+    cd .. #Regresas un nivel
+    rm -rf $1 #Eliminas carpeta
 
     echo '1'    
 else
